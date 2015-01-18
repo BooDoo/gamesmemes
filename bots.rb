@@ -5,7 +5,8 @@ require 'rest-client'
 SETTINGS = Dotenv.load.merge(ENV)
 
 class MyBot < Ebooks::Bot
-    attr_accessor 'gb_api_key'
+  attr_accessor 'gb_api_key', 'gb_api', 'gb_params'
+  attr_reader 'map_names'
 
   def configure
     # Consumer details come from registering an app at https://dev.twitter.com/
@@ -14,30 +15,37 @@ class MyBot < Ebooks::Bot
     self.consumer_key = SETTINGS['CONSUMER_KEY'] # Your app consumer key
     self.consumer_secret = SETTINGS['CONSUMER_SECRET'] # Your app consumer secret
     self.gb_api_key = SETTINGS['GIANTBOMB_API_KEY']
+    self.gb_api = RestClient::Resource.new("http://www.giantbomb.com/api")
+    self.gb_params = {:api_key => gb_api_key, :format => :json, :field_list => 'name'}
 
     # Users to block instead of interacting with
     self.blacklist = ['tnietzschequote']
 
     # Range in seconds to randomize delay when bot.delay is called
     self.delay_range = 1..6
-  end
 
-  def get_games
-    # RestClient.get ("http://www.giantbomb.com/api/games/?api_key=#{self.gb_api_key}&field_list=name&format=json&limit=100&offset=#{rand 44450}") do |res|
-    #   JSON.parse(res, :symbolize_names:true)[:results].first[:name]
-    # end
-  end
-
-  def get_game
-    RestClient.get ("http://www.giantbomb.com/api/games/?api_key=#{self.gb_api_key}&field_list=name&format=json&limit=1&offset=#{rand 44550}") do |res|
-      JSON.parse(res, :symbolize_names=>true)[:results].first[:name]
+    self.map_names = Proc.new do |res|
+      if res.is_a? String
+        res = JSON.parse(res, :symbolize_names=>true)
+      end
+      res[:results].map {|el| el[:name]}
     end
   end
 
+  def get_game_titles(limit=25)
+    params = {:limit => limit, :offset => rand(44550 - limit)}
+    params = gb_params.merge(params)
+    gb_api['games/'].get(:params => params, &map_names)
+  end
+
+  def get_game_title
+    get_game_titles(1).first
+  end
+
   def on_startup
-    tweet "#NameYourJunkAfterAGame #{get_game}"
+    tweet "#NameYourJunkAfterAGame #{get_game_title}"
     scheduler.every '8m' do # Tweet something every 24 hours
-      tweet "#NameYourJunkAfterAGame #{get_game}"
+      tweet "#NameYourJunkAfterAGame #{get_game_title}"
     end
   end
 
