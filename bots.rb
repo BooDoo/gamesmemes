@@ -7,6 +7,7 @@ SETTINGS = Dotenv.load.merge(ENV)
 class MyBot < Ebooks::Bot
   attr_accessor 'gb_api_key', 'gb_api', 'gb_params'
   attr_reader 'map_names'
+  attr_reader 'title_hashtags', 'interjections', 'solo_activities'
 
   def configure
     # Consumer details come from registering an app at https://dev.twitter.com/
@@ -18,13 +19,18 @@ class MyBot < Ebooks::Bot
     self.gb_api = RestClient::Resource.new("http://www.giantbomb.com/api")
     self.gb_params = {:api_key => gb_api_key, :format => :json, :field_list => 'name'}
 
+    # Bespoke, artisinal content:
+    @title_hashtags = ["#NameYourJunkAfterAGame", "#DescribeYourSexLifeWithAGame"]
+    @interjections = ["lol", "ayyyy lmao", "wtf right?!", "tho", "lmfao", "lmaoooooo", "iM DyING", "*SCREAMING*", "#TRUTH", "#LIFE", "#blessed"]
+    @solo_activities = ["smoked weed", "got drunk", "took you to prom", "got pregnant", "took shrooms", "tripped balls", "went to ur school", "did let's plays", "proposed to you", "were gay", "were gay as hell"]
+
     # Users to block instead of interacting with
     self.blacklist = ['tnietzschequote']
 
     # Range in seconds to randomize delay when bot.delay is called
     self.delay_range = 1..6
 
-    self.map_names = Proc.new do |res|
+    @map_names = Proc.new do |res|
       if res.is_a? String
         res = JSON.parse(res, :symbolize_names=>true)
       end
@@ -42,10 +48,41 @@ class MyBot < Ebooks::Bot
     get_game_titles(1).first
   end
 
+  def get_character_names(limit=2)
+    params = {:limit => limit, :offset => rand(30200 - limit)}
+    params = gb_params.merge(params)
+    gb_api['characters/'].get(:params => params, &map_names)
+  end
+
+  def get_character_name
+    get_character_names(1).first
+  end
+
+  def make_meme
+    case rand(1001)
+    when 0...400
+      "#{title_hashtags.sample} #{get_game_title}"
+    when 400...500
+      "#{get_character_name} in the streets, #{get_character_name} in the sheets."
+    when 500...600
+      "what if #{get_character_name} #{solo_activities.sample} #{interjections.sample}"
+    when 600...700
+      "#{title_hashtags.sample}\nRT if #{get_game_title}\nFav if #{get_game_title}"
+    when 700...800
+      "#{get_character_name} x #{get_character_name}: my otp"
+    when 800...900
+      "my dream game is #{get_game_title} but with #{get_character_name} in it #{interjections.sample}"
+    when 900...1000
+      "#YearOf#{get_character_name.gsub(/[^A-z0-9]/,'')} #{interjections.sample}"
+    else
+      rand(2) == 1 ? "#TeamBoneless" : "#TeamBoneIn"
+    end
+  end
+
   def on_startup
-    tweet "#NameYourJunkAfterAGame #{get_game_title}"
+    tweet make_meme
     scheduler.every '8m' do # Tweet something every 24 hours
-      tweet "#NameYourJunkAfterAGame #{get_game_title}"
+      tweet make_meme
     end
   end
 
