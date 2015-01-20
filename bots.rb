@@ -81,7 +81,7 @@ class MyBot < Ebooks::Bot
 
   def on_startup
     tweet make_meme
-    scheduler.every '8m' do # Tweet something every 24 hours
+    scheduler.every '48m' do # Tweet something every 24 hours
       tweet make_meme
     end
   end
