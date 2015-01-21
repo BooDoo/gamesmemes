@@ -60,8 +60,10 @@ class MyBot < Ebooks::Bot
 
   def make_meme
     case rand(1001)
-    when 0...400
+    when 0...300
       "#{title_hashtags.sample} #{get_game_title}"
+    when 300...400
+      "#{get_game_title} confirmed for evo #{interjections.sample}"
     when 400...500
       "#{get_character_name} in the streets, #{get_character_name} in the sheets."
     when 500...600
