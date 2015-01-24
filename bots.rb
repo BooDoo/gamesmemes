@@ -31,10 +31,35 @@ class MyBot < Ebooks::Bot
     self.delay_range = 1..6
 
     @map_names = Proc.new do |res|
-      if res.is_a? String
+      if res.nil?
+        return nil
+      elsif res.is_a? String
         res = JSON.parse(res, :symbolize_names=>true)
       end
       res[:results].map {|el| el[:name]}
+    end
+  end
+
+  def search_game_titles(query, limit=1)
+    params = {:limit => limit}
+  end
+
+  def random_from_search_result(path='search/', params)
+    params = gb_params.merge({:limit=>1}).merge(params)
+    res = JSON.parse(gb_api[path].get(:params => params), :symbolize_names=>true)
+    total = res[:number_of_total_results]
+    if total < 1
+      nil
+    # elsif res[:error] != "OK"
+    #   log "WARN: #{res[:error]}"
+    #   nil
+    else
+      offset = rand(total - params[:limit])
+      params[:page] = offset
+      # params = params.merge({:offset => offset})
+      res = gb_api[path].get(:params => params)
+      res = JSON.parse(res, :symbolize_names=>true)
+      res[:results]
     end
   end
 
@@ -60,8 +85,10 @@ class MyBot < Ebooks::Bot
 
   def make_meme
     case rand(1001)
-    when 0...300
+    when 0...200
       "#{title_hashtags.sample} #{get_game_title}"
+    when 200...300
+      "#{random_from_search_result('search/', {:query=>"dead,deadly,bad,badly", :resources=>"game"}).first[:name].gsub(/dead|bad/i, "Dad")} #DadGames"
     when 300...400
       "#{get_game_title} confirmed for evo #{interjections.sample}"
     when 400...500
