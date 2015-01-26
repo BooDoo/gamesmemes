@@ -7,7 +7,7 @@ SETTINGS = Dotenv.load.merge(ENV)
 class MyBot < Ebooks::Bot
   attr_accessor 'gb_api_key', 'gb_api', 'gb_params'
   attr_reader 'map_names'
-  attr_reader 'title_hashtags', 'interjections', 'solo_activities'
+  attr_reader 'title_hashtags', 'interjections', 'solo_activities', 'sins'
 
   def configure
     # Consumer details come from registering an app at https://dev.twitter.com/
@@ -22,6 +22,7 @@ class MyBot < Ebooks::Bot
     # Bespoke, artisinal content:
     @title_hashtags = ["#NameYourJunkAfterAGame", "#DescribeYourSexLifeWithAGame"]
     @interjections = ["lol", "ayyyy lmao", "wtf right?!", "tho", "lmfao", "lmaoooooo", "iM DyING", "*SCREAMING*", "#TRUTH", "#LIFE", "#blessed"]
+    @sins = ["romanced CHAR", "slept with CHAR", "had carnal relations with CHAR", "left CHAR to die", "never cared about CHAR", "cried irl over CHAR", "RPed as CHAR", "LARPed as CHAR", "shipped myself with CHAR", "a shrine to CHAR"]
     @solo_activities = ["smoked weed", "got drunk", "took you to prom", "got pregnant", "took shrooms", "tripped balls", "went to ur school", "did let's plays", "proposed to you", "were gay", "were gay as hell"]
 
     # Users to block instead of interacting with
@@ -85,8 +86,12 @@ class MyBot < Ebooks::Bot
 
   def make_meme
     case rand(1001)
-    when 0...200
+    when 0...100
       "#{title_hashtags.sample} #{get_game_title}"
+    when 100...200
+      character = get_character_name
+      sin = sins.sample.gsub(/CHAR/, character)
+      "Forgive me father, for I have #{sin} #GameConfessions"
     when 200...300
       "#{random_from_search_result('search/', {:query=>"dead,deadly,bad,badly", :resources=>"game"}).first[:name].gsub(/dead|bad/i, "Dad")} #DadGames"
     when 300...400
