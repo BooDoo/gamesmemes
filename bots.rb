@@ -85,7 +85,7 @@ class MyBot < Ebooks::Bot
   end
 
   def make_meme
-    case rand(1001)
+    case rand(1102)
     when 0...100
       "#{title_hashtags.sample} #{get_game_title}"
     when 100...200
@@ -93,7 +93,7 @@ class MyBot < Ebooks::Bot
       sin = sins.sample.gsub(/CHAR/, character)
       "Forgive me father, for I have #{sin} #GameConfessions"
     when 200...300
-      "#{random_from_search_result('search/', {:query=>"dead,deadly,bad,badly", :resources=>"game"}).first[:name].gsub(/dead|bad/i, "Dad")} #DadGames"
+      "#{random_from_search_result('search/', {:query=>"dead,deadly,bad,badly", resources=>"game"}).first[:name].gsub(/dead|bad/i, "Dad")} #DadGames"
     when 300...400
       "#{get_game_title} confirmed for evo #{interjections.sample}"
     when 400...500
@@ -108,6 +108,9 @@ class MyBot < Ebooks::Bot
       "my dream game is #{get_game_title} but with #{get_character_name} in it #{interjections.sample}"
     when 900...1000
       "#YearOf#{get_character_name.gsub(/[^A-z0-9]/,'')} #{interjections.sample}"
+    when 1000...1100
+      title = random_from_search_result('search/', {:query=>"way,lay,slay,pay,play,sway,bay,say,day,may", :resources=>"game"})
+      "#{title}? More like #{title.downcase.gsub(/[pwlbdsm]ay(\S*)/, 'bae\1')}, amirite?"
     else
       rand(2) == 1 ? "#TeamBoneless" : "#TeamBoneIn"
     end
