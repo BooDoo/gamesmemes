@@ -109,7 +109,7 @@ class MyBot < Ebooks::Bot
     when 900...1000
       "#YearOf#{get_character_name.gsub(/[^A-z0-9]/,'')} #{interjections.sample}"
     when 1000...1100
-      title = random_from_search_result('search/', {:query=>"way,lay,slay,pay,play,sway,bay,say,day,may", :resources=>"game"})
+      title = random_from_search_result('search/', {:query=>"way,lay,slay,pay,play,sway,bay,say,day,may", :resources=>"game"}).first[:name]
       "#{title}?\nMore like #{title.downcase.gsub(/[pwlbdsm]ay(\S*)/, 'bae\1')}, amirite?"
     else
       rand(2) == 1 ? "#TeamBoneless" : "#TeamBoneIn"
