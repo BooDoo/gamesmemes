@@ -1,4 +1,5 @@
 require 'twitter_ebooks'
+require 'tempfile'
 require 'dotenv'
 require 'rest-client'
 
@@ -84,8 +85,17 @@ class MyBot < Ebooks::Bot
     get_character_names(1).first
   end
 
+  def get_character_images(limit=2)
+    params = gb_params.merge({:limit=>limit, :field_list=>'name,image', :offset=>rand(30200)})
+    JSON.parse(gb_api['characters/'].get(:params => params), :symbolize_names=>true)[:results].map {|c| c[:image][:super_url]}
+  end
+
+  def get_character_image
+    get_character_images(1).first
+  end
+
   def make_meme
-    case rand(1102)
+    case rand(1202)
     when 0...100
       "#{title_hashtags.sample} #{get_game_title}"
     when 100...200
@@ -111,6 +121,14 @@ class MyBot < Ebooks::Bot
     when 1000...1100
       title = random_from_search_result('search/', {:query=>"way,lay,slay,pay,play,sway,bay,say,day,may", :resources=>"game"}).first[:name]
       "#{title}?\nMore like #{title.downcase.gsub(/[pwlbdsm]+ay(\S*)/, 'bae\1')}, amirite?"
+    when 1100...1200
+      img_url = get_character_image
+      img_type = File.extname(img_url)[1..-1]
+      age = (13..24).to_a.sample
+      Tempfile.open("tmp_pic") do |f|
+        f.write(RestClient.get(img_url))
+        twitter.update_with_media("#TwitPicYourselfAt#{age}", File.new(f.path), {:type=>img_type})
+      end
     else
       rand(2) == 1 ? "#TeamBoneless" : "#TeamBoneIn"
     end
