@@ -127,7 +127,7 @@ class MyBot < Ebooks::Bot
       age = (13..24).to_a.sample
       Tempfile.open("tmp_pic") do |f|
         f.write(RestClient.get(img_url))
-        twitter.update_with_media("#TwitPicYourselfAt#{age}", File.new(f.path), {:type=>img_type})
+        pictweet("#TwitPicYourselfAt#{age}", f.path, {:type=>img_type})
       end
     else
       tweet(rand(2) == 1 ? "#TeamBoneless" : "#TeamBoneIn")
