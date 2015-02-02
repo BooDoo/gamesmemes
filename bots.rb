@@ -93,7 +93,7 @@ class MyBot < Ebooks::Bot
       sin = sins.sample.gsub(/CHAR/, character)
       "Forgive me father, for I have #{sin} #GameConfessions"
     when 200...300
-      "#{random_from_search_result('search/', {:query=>"dead,deadly,bad,badly", resources=>"game"}).first[:name].gsub(/dead|bad/i, "Dad")} #DadGames"
+      "#{random_from_search_result('search/', {:query=>"dead,deadly,bad,badly", :resources=>"game"}).first[:name].gsub(/dead|bad/i, "Dad")} #DadGames"
     when 300...400
       "#{get_game_title} confirmed for evo #{interjections.sample}"
     when 400...500
@@ -110,7 +110,7 @@ class MyBot < Ebooks::Bot
       "#YearOf#{get_character_name.gsub(/[^A-z0-9]/,'')} #{interjections.sample}"
     when 1000...1100
       title = random_from_search_result('search/', {:query=>"way,lay,slay,pay,play,sway,bay,say,day,may", :resources=>"game"}).first[:name]
-      "#{title}?\nMore like #{title.downcase.gsub(/[pwlbdsm]ay(\S*)/, 'bae\1')}, amirite?"
+      "#{title}?\nMore like #{title.downcase.gsub(/[pwlbdsm]+ay(\S*)/, 'bae\1')}, amirite?"
     else
       rand(2) == 1 ? "#TeamBoneless" : "#TeamBoneIn"
     end
