@@ -120,7 +120,7 @@ class MyBot < Ebooks::Bot
       "#YearOf#{get_character_name.gsub(/[^A-z0-9]/,'')} #{interjections.sample}"
     when 1000...1100
       title = random_from_search_result('search/', {:query=>"way,lay,slay,pay,play,sway,bay,say,day,may", :resources=>"game"}).first[:name]
-      "#{title}?\nMore like #{title.downcase.gsub(/[pwlbdsm]+ay(\S*)/, 'bae\1')}, amirite?"
+      "#{title}?\nMore like #{title.downcase.gsub(/[pwlbdsm]+aye?(\S*)/, 'bae\1')}, amirite?"
     when 1100...1200
       img_url = get_character_image
       img_type = File.extname(img_url)[1..-1]
