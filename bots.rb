@@ -97,30 +97,30 @@ class MyBot < Ebooks::Bot
   def make_meme
     case rand(1202)
     when 0...100
-      "#{title_hashtags.sample} #{get_game_title}"
+      tweet "#{title_hashtags.sample} #{get_game_title}"
     when 100...200
       character = get_character_name
       sin = sins.sample.gsub(/CHAR/, character)
-      "Forgive me father, for I have #{sin} #GameConfessions"
+      tweet "Forgive me father, for I have #{sin} #GameConfessions"
     when 200...300
-      "#{random_from_search_result('search/', {:query=>"dead,deadly,bad,badly", :resources=>"game"}).first[:name].gsub(/dead|bad/i, "Dad")} #DadGames"
+      tweet "#{random_from_search_result('search/', {:query=>"dead,deadly,bad,badly", :resources=>"game"}).first[:name].gsub(/dead|bad/i, "Dad")} #DadGames"
     when 300...400
-      "#{get_game_title} confirmed for evo #{interjections.sample}"
+      tweet "#{get_game_title} confirmed for evo #{interjections.sample}"
     when 400...500
-      "#{get_character_name} in the streets, #{get_character_name} in the sheets."
+      tweet "#{get_character_name} in the streets, #{get_character_name} in the sheets."
     when 500...600
-      "what if #{get_character_name} #{solo_activities.sample} #{interjections.sample}"
+      tweet "what if #{get_character_name} #{solo_activities.sample} #{interjections.sample}"
     when 600...700
-      "#{title_hashtags.sample}\nRT if #{get_game_title}\nFav if #{get_game_title}"
+      tweet "#{title_hashtags.sample}\nRT if #{get_game_title}\nFav if #{get_game_title}"
     when 700...800
-      "#{get_character_name} x #{get_character_name}: my otp"
+      tweet "#{get_character_name} x #{get_character_name}: my otp"
     when 800...900
-      "my dream game is #{get_game_title} but with #{get_character_name} in it #{interjections.sample}"
+      tweet "my dream game is #{get_game_title} but with #{get_character_name} in it #{interjections.sample}"
     when 900...1000
-      "#YearOf#{get_character_name.gsub(/[^A-z0-9]/,'')} #{interjections.sample}"
+      tweet "#YearOf#{get_character_name.gsub(/[^A-z0-9]/,'')} #{interjections.sample}"
     when 1000...1100
       title = random_from_search_result('search/', {:query=>"way,lay,slay,pay,play,sway,bay,say,day,may", :resources=>"game"}).first[:name]
-      "#{title}?\nMore like #{title.downcase.gsub(/[pwlbdsm]+aye?(\S*)/, 'bae\1')}, amirite?"
+      tweet "#{title}?\nMore like #{title.downcase.gsub(/[pwlbdsm]+aye?(\S*)/, 'bae\1')}, amirite?"
     when 1100...1200
       img_url = get_character_image
       img_type = File.extname(img_url)[1..-1]
@@ -130,14 +130,14 @@ class MyBot < Ebooks::Bot
         twitter.update_with_media("#TwitPicYourselfAt#{age}", File.new(f.path), {:type=>img_type})
       end
     else
-      rand(2) == 1 ? "#TeamBoneless" : "#TeamBoneIn"
+      tweet(rand(2) == 1 ? "#TeamBoneless" : "#TeamBoneIn")
     end
   end
 
   def on_startup
     tweet make_meme
     scheduler.every '48m' do # Tweet something every 24 hours
-      tweet make_meme
+      make_meme
     end
   end
 
