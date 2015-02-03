@@ -185,7 +185,7 @@ class MyBot < Ebooks::Bot
 end
 
 # Make a MyBot and attach it to an account
-MyBot.new("gamesmemes") do |bot|
+MyBot.new("GamesMemes") do |bot|
   bot.access_token = SETTINGS['ACCESS_TOKEN'] # Token connecting the app to this account
   bot.access_token_secret = SETTINGS['ACCESS_TOKEN_SECRET'] # Secret connecting the app to this account
 end
