@@ -9,6 +9,7 @@ class MyBot < Ebooks::Bot
   attr_accessor 'gb_api_key', 'gb_api', 'gb_params'
   attr_reader 'map_names'
   attr_reader 'title_hashtags', 'interjections', 'solo_activities', 'sins'
+  attr_reader 'memes'
 
   def configure
     # Consumer details come from registering an app at https://dev.twitter.com/
@@ -94,44 +95,60 @@ class MyBot < Ebooks::Bot
     get_character_images(1).first
   end
 
-  def make_meme
-    case rand(1202)
-    when 0...100
-      tweet "#{title_hashtags.sample} #{get_game_title}"
-    when 100...200
+  @memes = [
+    {label: 'title_hashgags', action: :tweet, gen: proc {
+      "#{title_hashtags.sample} #{get_game_title}"
+    }},
+    {label: 'character_confessions', action: :tweet, gen: proc {
       character = get_character_name
       sin = sins.sample.gsub(/CHAR/, character)
-      tweet "Forgive me father, for I have #{sin} #GameConfessions"
-    when 200...300
-      tweet "#{random_from_search_result('search/', {:query=>"dead,deadly,bad,badly", :resources=>"game"}).first[:name].gsub(/dead|bad/i, "Dad")} #DadGames"
-    when 300...400
-      tweet "#{get_game_title} confirmed for evo #{interjections.sample}"
-    when 400...500
-      tweet "#{get_character_name} in the streets, #{get_character_name} in the sheets."
-    when 500...600
-      tweet "what if #{get_character_name} #{solo_activities.sample} #{interjections.sample}"
-    when 600...700
-      tweet "#{title_hashtags.sample}\nRT if #{get_game_title}\nFav if #{get_game_title}"
-    when 700...800
-      tweet "#{get_character_name} x #{get_character_name}: my otp"
-    when 800...900
-      tweet "my dream game is #{get_game_title} but with #{get_character_name} in it #{interjections.sample}"
-    when 900...1000
-      tweet "#YearOf#{get_character_name.gsub(/[^A-z0-9]/,'')} #{interjections.sample}"
-    when 1000...1100
+      "Forgive me father, for I have #{sin} #GameConfessions"
+    }},
+    {label: 'dad_games', action: :tweet, gen: proc {
+      dad_query = "dead,deadly,bad,badly,sad,rad,radical"
+      dad_regex = /dead|bad|rad|sad/i
+      "#{random_from_search_result('search/', {:query=>dad_query, :resources=>"game"}).first[:name].gsub(dad_regex, "Dad")} #DadGames"
+    }},
+    {label: 'evo', action: :tweet, gen: proc {
+      "#{get_game_title} confirmed for evo #{interjections.sample}"
+    }},
+    {label: 'streets_sheets', action: :tweet, gen: proc {
+      "#{get_character_name} in the streets, #{get_character_name} in the sheets."
+    }},
+    {label: 'character_whatif', action: :tweet, gen: proc {
+      "what if #{get_character_name} #{solo_activities.sample} #{interjections.sample}"
+    }},
+    {label: 'title_rt_or_fav', action: :tweet, gen: proc {
+      "#{title_hashtags.sample}\nRT if #{get_game_title}\nFav if #{get_game_title}"
+    }},
+    {label: 'character_otp', action: :tweet, gen: proc {
+      "#{get_character_name} x #{get_character_name}: my otp"
+    }},
+    {label: 'dream_game', action: :tweet, gen: proc {
+      "my dream game is #{get_game_title} but with #{get_character_name} in it #{interjections.sample}"
+    }},
+    {label: 'year_of_character', action: :tweet, gen: proc {
+      "#YearOf#{get_character_name.gsub(/[^A-z0-9]/,'')} #{interjections.sample}"
+    }},
+    {label: 'bae_games', action: :tweet, gen: proc {
       title = random_from_search_result('search/', {:query=>"way,lay,slay,pay,play,sway,bay,say,day,may", :resources=>"game"}).first[:name]
-      tweet "#{title}?\nMore like #{title.downcase.gsub(/[pwlbdsm]+aye?(\S*)/, 'bae\1')}, amirite?"
-    when 1100...1200
+      "#{title}?\nMore like #{title.downcase.gsub(/[pwlbdsm]+aye?(\S*)/, 'bae\1')}, amirite?"
+    }},
+    {label: 'twitpic_yourself', action: :pictweet, gen: proc {
       img_url = get_character_image
       img_type = File.extname(img_url)[1..-1]
       age = (13..24).to_a.sample
       Tempfile.open("tmp_pic") do |f|
         f.write(RestClient.get(img_url))
-        pictweet("#TwitPicYourselfAt#{age}", f.path, {:type=>img_type})
+        ["#TwitPicYourselfAt#{age}", f.path, {:type=>img_type}]
       end
-    else
-      tweet(rand(2) == 1 ? "#TeamBoneless" : "#TeamBoneIn")
-    end
+    }}
+  ]
+
+  def make_meme
+    meme = memes.sample
+    action = method(meme[:action])
+    action.call(*meme[:gen].call)
   end
 
   def on_startup
