@@ -26,7 +26,55 @@ class MyBot < Ebooks::Bot
     @interjections = ["lol", "ayyyy lmao", "wtf right?!", "tho", "lmfao", "lmaoooooo", "iM DyING", "*SCREAMING*", "#TRUTH", "#LIFE", "#blessed"]
     @sins = ["romanced CHAR", "slept with CHAR", "had carnal relations with CHAR", "left CHAR to die", "never cared about CHAR", "cried irl over CHAR", "RPed as CHAR", "LARPed as CHAR", "shipped myself with CHAR", "a shrine to CHAR", "coveted my neighbor's CHAR", "taken CHAR's name in vain", "not one fuck to give about CHAR", "known CHAR...biblically."]
     @solo_activities = ["smoked weed", "got drunk", "took you to prom", "got pregnant", "took shrooms", "tripped balls", "went to ur school", "did let's plays", "proposed to you", "were gay", "were gay as hell"]
-
+    @memes = [
+      {label: 'title_hashgags', action: :tweet, gen: proc {
+        "#{title_hashtags.sample} #{get_game_title}"
+      }},
+      {label: 'character_confessions', action: :tweet, gen: proc {
+        character = get_character_name
+        sin = sins.sample.gsub(/CHAR/, character)
+        "Forgive me father, for I have #{sin} #GameConfessions"
+      }},
+      {label: 'dad_games', action: :tweet, gen: proc {
+        dad_query = "dead,deadly,bad,badly,sad,rad,radical"
+        dad_regex = /dead|bad|rad|sad/i
+        "#{random_from_search_result('search/', {:query=>dad_query, :resources=>"game"}).first[:name].gsub(dad_regex, "Dad")} #DadGames"
+      }},
+      {label: 'evo', action: :tweet, gen: proc {
+        "#{get_game_title} confirmed for evo #{interjections.sample}"
+      }},
+      {label: 'streets_sheets', action: :tweet, gen: proc {
+        "#{get_character_name} in the streets, #{get_character_name} in the sheets."
+      }},
+      {label: 'character_whatif', action: :tweet, gen: proc {
+        "what if #{get_character_name} #{solo_activities.sample} #{interjections.sample}"
+      }},
+      {label: 'title_rt_or_fav', action: :tweet, gen: proc {
+        "#{title_hashtags.sample}\nRT if #{get_game_title}\nFav if #{get_game_title}"
+      }},
+      {label: 'character_otp', action: :tweet, gen: proc {
+        "#{get_character_name} x #{get_character_name}: my otp"
+      }},
+      {label: 'dream_game', action: :tweet, gen: proc {
+        "my dream game is #{get_game_title} but with #{get_character_name} in it #{interjections.sample}"
+      }},
+      {label: 'year_of_character', action: :tweet, gen: proc {
+        "#YearOf#{get_character_name.gsub(/[^A-z0-9]/,'')} #{interjections.sample}"
+      }},
+      {label: 'bae_games', action: :tweet, gen: proc {
+        title = random_from_search_result('search/', {:query=>"way,lay,slay,pay,play,sway,bay,say,day,may", :resources=>"game"}).first[:name]
+        "#{title}?\nMore like #{title.downcase.gsub(/[pwlbdsm]+aye?(\S*)/, 'bae\1')}, amirite?"
+      }},
+      {label: 'twitpic_yourself', action: :pictweet, gen: proc {
+        img_url = get_character_image
+        img_type = File.extname(img_url)[1..-1]
+        age = (13..24).to_a.sample
+        Tempfile.open("tmp_pic") do |f|
+          f.write(RestClient.get(img_url))
+          ["#TwitPicYourselfAt#{age}", f.path, {:type=>img_type}]
+        end
+      }}
+    ]
     # Users to block instead of interacting with
     self.blacklist = ['tnietzschequote']
 
@@ -94,56 +142,6 @@ class MyBot < Ebooks::Bot
   def get_character_image
     get_character_images(1).first
   end
-
-  @memes = [
-    {label: 'title_hashgags', action: :tweet, gen: proc {
-      "#{title_hashtags.sample} #{get_game_title}"
-    }},
-    {label: 'character_confessions', action: :tweet, gen: proc {
-      character = get_character_name
-      sin = sins.sample.gsub(/CHAR/, character)
-      "Forgive me father, for I have #{sin} #GameConfessions"
-    }},
-    {label: 'dad_games', action: :tweet, gen: proc {
-      dad_query = "dead,deadly,bad,badly,sad,rad,radical"
-      dad_regex = /dead|bad|rad|sad/i
-      "#{random_from_search_result('search/', {:query=>dad_query, :resources=>"game"}).first[:name].gsub(dad_regex, "Dad")} #DadGames"
-    }},
-    {label: 'evo', action: :tweet, gen: proc {
-      "#{get_game_title} confirmed for evo #{interjections.sample}"
-    }},
-    {label: 'streets_sheets', action: :tweet, gen: proc {
-      "#{get_character_name} in the streets, #{get_character_name} in the sheets."
-    }},
-    {label: 'character_whatif', action: :tweet, gen: proc {
-      "what if #{get_character_name} #{solo_activities.sample} #{interjections.sample}"
-    }},
-    {label: 'title_rt_or_fav', action: :tweet, gen: proc {
-      "#{title_hashtags.sample}\nRT if #{get_game_title}\nFav if #{get_game_title}"
-    }},
-    {label: 'character_otp', action: :tweet, gen: proc {
-      "#{get_character_name} x #{get_character_name}: my otp"
-    }},
-    {label: 'dream_game', action: :tweet, gen: proc {
-      "my dream game is #{get_game_title} but with #{get_character_name} in it #{interjections.sample}"
-    }},
-    {label: 'year_of_character', action: :tweet, gen: proc {
-      "#YearOf#{get_character_name.gsub(/[^A-z0-9]/,'')} #{interjections.sample}"
-    }},
-    {label: 'bae_games', action: :tweet, gen: proc {
-      title = random_from_search_result('search/', {:query=>"way,lay,slay,pay,play,sway,bay,say,day,may", :resources=>"game"}).first[:name]
-      "#{title}?\nMore like #{title.downcase.gsub(/[pwlbdsm]+aye?(\S*)/, 'bae\1')}, amirite?"
-    }},
-    {label: 'twitpic_yourself', action: :pictweet, gen: proc {
-      img_url = get_character_image
-      img_type = File.extname(img_url)[1..-1]
-      age = (13..24).to_a.sample
-      Tempfile.open("tmp_pic") do |f|
-        f.write(RestClient.get(img_url))
-        ["#TwitPicYourselfAt#{age}", f.path, {:type=>img_type}]
-      end
-    }}
-  ]
 
   def make_meme
     meme = @memes.sample
