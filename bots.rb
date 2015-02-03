@@ -146,7 +146,7 @@ class MyBot < Ebooks::Bot
   ]
 
   def make_meme
-    meme = memes.sample
+    meme = @memes.sample
     action = method(meme[:action])
     action.call(*meme[:gen].call)
   end
