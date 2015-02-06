@@ -61,6 +61,9 @@ class MyBot < Ebooks::Bot
       {label: 'year_of_character', action: :tweet, gen: proc {
         "#YearOf#{get_character_name.gsub(/[^A-z0-9]/,'')} #{interjections.sample}"
       }},
+      {label: 'netflix', action: :tweet, gen: proc {
+        "when will #Netflix make a #{get_game_title} show #{interjections.sample}"
+      }},
       {label: 'bae_games', action: :tweet, gen: proc {
         title = random_from_search_result('search/', {:query=>"way,lay,slay,pay,play,sway,bay,say,day,may", :resources=>"game"}).first[:name]
         gag_title = title.downcase.gsub(/[pwlbdsm]+aye?(\S*)/, 'bae\1')
