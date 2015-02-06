@@ -90,7 +90,7 @@ class MyBot < Ebooks::Bot
           end
         end
 
-        ["FourGameCrushes #{interjections.sample}", {:media_ids=>media_ids.join(',')}]
+        ["#FourGameCrushes #{interjections.sample}", {:media_ids=>media_ids.join(',')}]
       }}
     ]
     # Users to block instead of interacting with
