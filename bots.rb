@@ -63,7 +63,12 @@ class MyBot < Ebooks::Bot
       }},
       {label: 'bae_games', action: :tweet, gen: proc {
         title = random_from_search_result('search/', {:query=>"way,lay,slay,pay,play,sway,bay,say,day,may", :resources=>"game"}).first[:name]
-        "#{title}?\nMore like #{title.downcase.gsub(/[pwlbdsm]+aye?(\S*)/, 'bae\1')}, amirite?"
+        gag_title = title.downcase.gsub(/[pwlbdsm]+aye?(\S*)/, 'bae\1')
+        if title.downcase != gag_title
+          "#{title}?\nMore like #{gag_title}, amirite?"
+        else
+          "#{title}?\n More like...I got nothing, but it sucks."
+        end
       }},
       {label: 'twitpic_yourself', action: :pictweet, gen: proc {
         img_url = get_character_image
@@ -136,6 +141,7 @@ class MyBot < Ebooks::Bot
 
   def get_character_images(limit=2)
     params = gb_params.merge({:limit=>limit, :field_list=>'name,image', :offset=>rand(30200)})
+    # TODO: This fails very ungracefully when an image isn't available!
     JSON.parse(gb_api['characters/'].get(:params => params), :symbolize_names=>true)[:results].map {|c| c[:image][:super_url]}
   end
 
