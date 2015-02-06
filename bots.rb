@@ -78,6 +78,19 @@ class MyBot < Ebooks::Bot
           f.write(RestClient.get(img_url))
           ["#TwitPicYourselfAt#{age}", f.path, {:type=>img_type}]
         end
+      }},
+      {label: 'game_crushes', action: :tweet, gen: proc {
+        img_urls = []
+        4.times {img_urls.push get_character_image}
+
+        media_ids = img_urls.map do |img_url|
+          Tempfile.open("multi_img") do |f|
+            f.write(RestClient.get(img_url))
+            twitter.upload(File.new(f.path))
+          end
+        end
+
+        ["FourGameCrushes #{interjections.sample}", {:media_ids=>media_ids.join(',')}]
       }}
     ]
     # Users to block instead of interacting with
