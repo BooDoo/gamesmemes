@@ -8,7 +8,7 @@ SETTINGS = Dotenv.load.merge(ENV)
 class MyBot < Ebooks::Bot
   attr_accessor 'gb_api_key', 'gb_api', 'gb_params'
   attr_reader 'map_names'
-  attr_reader 'title_hashtags', 'interjections', 'solo_activities', 'sins'
+  attr_reader 'title_hashtags', 'interjections', 'solo_activities', 'sins', 'softeners'
   attr_reader 'memes'
 
   def configure
@@ -24,9 +24,13 @@ class MyBot < Ebooks::Bot
     # Bespoke, artisinal content:
     @title_hashtags = ["#NameYourJunkAfterAGame", "#DescribeYourSexLifeWithAGame"]
     @interjections = ["lol", "ayyyy lmao", "wtf right?!", "tho", "lmfao", "lmaoooooo", "iM DyING", "*SCREAMING*", "#TRUTH", "#LIFE", "#blessed"]
+    @softeners = ["imo", "tbqh", "tho", "though", "prolly", "probably", "I think", "just saying", "sorry", "sorry, not sorry"]
     @sins = ["romanced CHAR", "slept with CHAR", "had carnal relations with CHAR", "left CHAR to die", "never cared about CHAR", "cried irl over CHAR", "RPed as CHAR", "LARPed as CHAR", "shipped myself with CHAR", "a shrine to CHAR", "coveted my neighbor's CHAR", "taken CHAR's name in vain", "not one fuck to give about CHAR", "known CHAR...biblically."]
     @solo_activities = ["smoked weed", "got drunk", "took you to prom", "got pregnant", "took shrooms", "tripped balls", "went to ur school", "did let's plays", "proposed to you", "were gay", "were gay as hell"]
     @memes = [
+      {label: 'bogost_games', action: :tweet, gen: proc {
+        "#{get_game_title} would be a lot better without characters #{softeners.sample}"
+      }},
       {label: 'title_hashgags', action: :tweet, gen: proc {
         "#{title_hashtags.sample} #{get_game_title}"
       }},
