@@ -94,6 +94,14 @@ class MyBot < Ebooks::Bot
           ["SWISH!", f.path, {:type=>img_type}]
         end
       }},
+      {label: 'trump', action: :pictweet, gen: proc{
+        img_url = get_character_image
+        img_type = File.extname(img_url)[1..-1]
+        Tempfile.open("tmp_pic") do |f|
+          f.write(RestClient.get(img_url))
+          ["#PresCandidatesBetterThanTrump", f.path, {:type=>img_type}]
+        end
+      }},
       {label: 'game_crushes', action: :tweet, gen: proc {
         img_urls = []
         4.times {img_urls.push get_character_image}
