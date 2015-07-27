@@ -39,11 +39,11 @@ class MyBot < Ebooks::Bot
         sin = sins.sample.gsub(/CHAR/, character)
         "Forgive me father, for I have #{sin} #GameConfessions"
       }},
-      {label: 'dad_games', action: :tweet, gen: proc {
-        dad_query = "dead,deadly,bad,badly,sad,rad,radical"
-        dad_regex = /dead|bad|rad|sad/i
-        "#{random_from_search_result('search/', {:query=>dad_query, :resources=>"game"}).first[:name].gsub(dad_regex, "Dad")} #DadGames"
-      }},
+#       {label: 'dad_games', action: :tweet, gen: proc {
+#         dad_query = "dead,deadly,bad,badly,sad,rad,radical"
+#         dad_regex = /dead|bad|rad|sad/i
+#         "#{random_from_search_result('search/', {:query=>dad_query, :resources=>"game"}).first[:name].gsub(dad_regex, "Dad")} #DadGames"
+#       }},
       {label: 'evo', action: :tweet, gen: proc {
         "#{get_game_title} confirmed for evo #{interjections.sample}"
       }},
