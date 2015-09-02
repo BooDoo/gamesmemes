@@ -39,11 +39,12 @@ class MyBot < Ebooks::Bot
         sin = sins.sample.gsub(/CHAR/, character)
         "Forgive me father, for I have #{sin} #GameConfessions"
       }},
-#       {label: 'dad_games', action: :tweet, gen: proc {
-#         dad_query = "dead,deadly,bad,badly,sad,rad,radical"
-#         dad_regex = /dead|bad|rad|sad/i
-#         "#{random_from_search_result('search/', {:query=>dad_query, :resources=>"game"}).first[:name].gsub(dad_regex, "Dad")} #DadGames"
-#       }},
+      {label: 'dad_games', action: :tweet, gen: proc {
+        dad_terms = ["dead", "deadly", "bad", "sad", "rad", "radical"]
+        dad_query = dad_terms.sample(4).join(",")
+        dad_regex = /dead|bad|rad|sad/i
+        "#{random_from_search_result('search/', {:query=>dad_query, :resources=>"game"}).first[:name].gsub(dad_regex, "Dad")} #DadGames"
+      }},
       {label: 'evo', action: :tweet, gen: proc {
         "#{get_game_title} confirmed for evo #{interjections.sample}"
       }},
@@ -69,7 +70,10 @@ class MyBot < Ebooks::Bot
         "when will #Netflix make a #{get_game_title} show #{interjections.sample}"
       }},
       {label: 'bae_games', action: :tweet, gen: proc {
-        title = random_from_search_result('search/', {:query=>"way,lay,slay,pay,play,sway,bay,say,day,may", :resources=>"game"}).first[:name]
+        # We need to be more restrictive with our search complexity....
+        bae_terms = ["way", "lay", "slay", "pay", "play", "sway" "bay", "say", "day", "may"]
+        bae_query = bae_terms.sample(4).join(",")
+        title = random_from_search_result('search/', {:query=>query, :resources=>"game"}).first[:name]
         gag_title = title.downcase.gsub(/[pwlbdsm]+aye?(\S*)/, 'bae\1')
         if title.downcase != gag_title
           "#{title}?\nMore like #{gag_title}, amirite?"
@@ -141,10 +145,6 @@ class MyBot < Ebooks::Bot
       end
       res[:results].map {|el| el[:name]}
     end
-  end
-
-  def search_game_titles(query, limit=1)
-    params = {:limit => limit}
   end
 
   def random_from_search_result(path='search/', params)
