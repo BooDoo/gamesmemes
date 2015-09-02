@@ -224,6 +224,10 @@ class MyBot < Ebooks::Bot
     get_character_images(1).first
   end
 
+  def split_keep(input, pattern=/([\.\?\!])/)
+    return input.split(pattern).each_slice(2).map(&:join)
+  end
+
   def make_meme
     meme = @memes.sample
     action = method(meme[:action])
