@@ -7,6 +7,8 @@ SETTINGS = Dotenv.load.merge(ENV)
 
 class MyBot < Ebooks::Bot
   attr_accessor 'gb_api_key', 'gb_api', 'gb_params'
+  attr_accessor 'accessories_max', 'characters_max', 'companies_max', 'concepts_max', 'franchises_max', 'games_max', 'game_ratings_max', 'genres_max', 'locations_max', 'objects_max', 'people_max', 'platforms_max', 'promos_max', 'rating_boards_max', 'regions_max', 'releases_max', 'reviews_max', 'themes_max', 'user_reviews_max', 'videos_max', 'video_types_max'
+
   attr_reader 'map_names'
   attr_reader 'title_hashtags', 'interjections', 'solo_activities', 'sins', 'softeners'
   attr_reader 'memes'
@@ -25,29 +27,29 @@ class MyBot < Ebooks::Bot
     # N.B.: ids are 1-indexed
     # TODO: read on load(?) and persist(?)
     # as of 9/1/15
-    self.ACCESSORIES_MAX = 85
-    self.CHARACTERS_MAX = 31242
-    # self.CHATS_MAX = 0
-    self.COMPANIES_MAX = 10835
-    self.CONCEPTS_MAX = 7880
-    self.FRANCHISES_MAX = 3233
-    self.GAMES_MAX = 46612
-    self.GAME_RATINGS_MAX = 32
-    self.GENRES_MAX = 50
-    self.LOCATIONS_MAX = 4777
-    self.OBJECTS_MAX = 5958
-    self.PEOPLE_MAX = 149495
-    self.PLATFORMS_MAX = 142
-    self.PROMOS_MAX = 50
-    self.RATING_BOARDS_MAX = 6
-    self.REGIONS_MAX = 4
-    self.RELEASES_MAX = 71986
-    self.REVIEWS_MAX = 666
-    self.THEMES_MAX = 30
-    # self.TYPES_MAX = returns 0-indexed list of objects [{}, {}]
-    self.USER_REVIEWS_MAX = 27078
-    self.VIDEOS_MAX = 9550
-    self.VIDEO_TYPES_MAX = 14
+    self.accessories_max = 85
+    self.characters_max = 31242
+    # self.chats_max = 0
+    self.companies_max = 10835
+    self.concepts_max = 7880
+    self.franchises_max = 3233
+    self.games_max = 46612
+    self.game_ratings_max = 32
+    self.genres_max = 50
+    self.locations_max = 4777
+    self.objects_max = 5958
+    self.people_max = 149495
+    self.platforms_max = 142
+    self.promos_max = 50
+    self.rating_boards_max = 6
+    self.regions_max = 4
+    self.releases_max = 71986
+    self.reviews_max = 666
+    self.themes_max = 30
+    # self.types_max = returns 0-indexed list of objects [{}, {}]
+    self.user_reviews_max = 27078
+    self.videos_max = 9550
+    self.video_types_max = 14
 
     # Bespoke, artisinal content:
     @title_hashtags = ["#NameYourJunkAfterAGame", "#DescribeYourSexLifeWithAGame"]
@@ -195,7 +197,7 @@ class MyBot < Ebooks::Bot
   end
 
   def get_game_titles(limit=25)
-    params = {:limit => limit, :offset => rand(GAMES_MAX - limit)}
+    params = {:limit => limit, :offset => rand(games_max - limit)}
     params = gb_params.merge(params)
     gb_api['games/'].get(:params => params, &map_names)
   end
@@ -205,7 +207,7 @@ class MyBot < Ebooks::Bot
   end
 
   def get_character_names(limit=2)
-    params = {:limit => limit, :offset => rand(CHARACTERS_MAX - limit)}
+    params = {:limit => limit, :offset => rand(characters_max - limit)}
     params = gb_params.merge(params)
     gb_api['characters/'].get(:params => params, &map_names)
   end
@@ -215,7 +217,7 @@ class MyBot < Ebooks::Bot
   end
 
   def get_character_images(limit=2)
-    params = gb_params.merge({:limit=>limit, :field_list=>'name,image', :offset=>rand(CHARACTERS_MAX - limit)})
+    params = gb_params.merge({:limit=>limit, :field_list=>'name,image', :offset=>rand(characters_max - limit)})
     # TODO: This fails very ungracefully when an image isn't available!
     JSON.parse(gb_api['characters/'].get(:params => params), :symbolize_names=>true)[:results].map {|c| c[:image][:super_url]}
   end
