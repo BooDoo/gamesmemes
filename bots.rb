@@ -5,12 +5,15 @@ require 'rest-client'
 
 SETTINGS = Dotenv.load.merge(ENV)
 
+NUMPAD_ARROWS = ['','↙','↓','↘','←','','→','↖','↑','↗']
+GAME_ENGINES = ["Pyrogenesis", "Aleph One", "Clausewitz", "RPG Maker", "Ren'Py", "PlayN", "Starling Framework", "Real Virtuality", "Cube", "Spring", "Infinity Engine", "Buildbox", "Enigma Engine", "Stratagus", "IW engine", "BRender", "Adventure Game Studio", "Core3D", "Moai SDK", "Cube 2", "Jedi", "Kivy", "id Tech 4", "id Tech 1","Source 2", "Riot Engine", "Shark 3D", "Blend4Web", "Luminous Studio", "Anura", "Source", "GoldSrc", "Cocos2d, Cocos2d-x, Cocos2d-html5", "GameMaker: Studio", "StepMania", "TOSHI", "Crystal Space", "ORX", "Adventure Game Interpreter", "Anvil", "BigWorld", "Bork3D Game Engine", "C4 Engine", "Chrome Engine", "CryEngine", "Crystal Tools", "Dagor Engine", "Dunia Engine", "ego", "Flare3D", "Fox Engine", "Freescape", "Frostbite", "Gamebryo", "Jade", "LithTech", "LyN", "MT Framework", "PhyreEngine", "Pie in the Sky", "Rockstar Advanced Game Engine","SAGE", "Unigine", "V-Play Game Engine", "Vicious Engine", "Vision", "RenderWare", "Unity", "Unreal Engine", "SCUMM", "Torque3D", "LÖVE", "4A Engine", "VRAGE", "ONScripter", "Game Editor", "OpenClonk", "HPL Engine", "Coldstone", "Panta Rhei", "Turbulenz", "ShiVa", "id Tech 2","id Tech 2","id Tech 3", "id Tech 5", "UbiArt Framework", "Alamo", "Odyssey Engine", "PlayCanvas", "Creation Engine", "REDengine", "Panda3D", "OGRE", "DimensioneX Multiplayer Engine", "Flexible Isometric Free Engine", "ioquake3", "Flixel", "Sierra's Creative Interpreter","Blender"]
+
 class MyBot < Ebooks::Bot
   attr_accessor 'gb_api_key', 'gb_api', 'gb_params'
   attr_accessor 'accessories_max', 'characters_max', 'companies_max', 'concepts_max', 'franchises_max', 'games_max', 'game_ratings_max', 'genres_max', 'locations_max', 'objects_max', 'people_max', 'platforms_max', 'promos_max', 'rating_boards_max', 'regions_max', 'releases_max', 'reviews_max', 'themes_max', 'user_reviews_max', 'videos_max', 'video_types_max'
 
   attr_reader 'map_names'
-  attr_reader 'title_hashtags', 'interjections', 'solo_activities', 'sins', 'softeners'
+  attr_reader 'title_hashtags', 'interjections', 'solo_activities', 'sins', 'softeners', 'trivia', 'engines'
   attr_reader 'memes'
 
   def configure
@@ -56,6 +59,8 @@ class MyBot < Ebooks::Bot
     @interjections = ["lol", "ayyyy lmao", "wtf right?!", "tho", "lmfao", "lmaoooooo", "iM DyING", "*SCREAMING*", "#TRUTH", "#LIFE", "#blessed"]
     @softeners = ["imo", "tbqh", "tho", "though", "prolly", "probably", "I think", "just saying", "sorry", "sorry, not sorry"]
     @sins = ["romanced CHAR", "slept with CHAR", "had carnal relations with CHAR", "left CHAR to die", "never cared about CHAR", "cried irl over CHAR", "RPed as CHAR", "LARPed as CHAR", "shipped myself with CHAR", "a shrine to CHAR", "coveted my neighbor's CHAR", "taken CHAR's name in vain", "not one fuck to give about CHAR", "known CHAR...biblically."]
+    @engines = GAME_ENGINES
+    @trivia = ["did you know?", "#tmyk", "wow!", "I can't believe", "you won't believe", "can you believe", "were you aware", "it's amazing that", "who could guess", "just learned", "TILT:", "oh wow", "amazing!", "NO WAY!"]
     @solo_activities = ["smoked weed", "got drunk", "took you to prom", "got pregnant", "took shrooms", "tripped balls", "went to ur school", "did let's plays", "proposed to you", "were gay", "were gay as hell"]
     @memes = [
       {label: 'bogost_games', action: :tweet, gen: proc {
@@ -92,6 +97,9 @@ class MyBot < Ebooks::Bot
       }},
       {label: 'dream_game', action: :tweet, gen: proc {
         "my dream game is #{get_game_title} but with #{get_character_name} in it #{interjections.sample}"
+      }},
+      {label: 'made_in', action: :tweet, gen: proc {
+        "#{trivia.sample} #{get_game_title} was made in #{engines.sample}!?"
       }},
       {label: 'year_of_character', action: :tweet, gen: proc {
         "#YearOf#{get_character_name.gsub(/[^A-z0-9]/,'')} #{interjections.sample}"
