@@ -185,6 +185,28 @@ class MyBot < Ebooks::Bot
     end
   end
 
+  def circle_letter_up(char)
+    # this is a stupid method I won't use, probably
+
+    # if Latin char, return circled upcase version
+    if Range.new("A".."z").include? char
+      # 9333 is the ordinal offset for circled uppercase
+      return [(n.upcase.ord + 9333)].pack("U")
+    else
+      return char
+    end
+  end
+
+  def circle_letter_down(char)
+    # stupid method
+    if Range.new("A".."z").include? char
+      #9327 is ordinal offset for circle lowercase
+      return [(n.downcase.ord + 9327)].pack("U")
+    else
+      return char
+    end
+  end
+
   def random_from_search_result(path='search/', params)
     params = gb_params.merge({:limit=>1}).merge(params)
     res = JSON.parse(gb_api[path].get(:params => params), :symbolize_names=>true)
@@ -238,8 +260,8 @@ class MyBot < Ebooks::Bot
     return input.split(pattern).each_slice(2).map(&:join)
   end
 
-  def make_meme
-    meme = @memes.sample
+  def make_meme(meme=nil)
+    meme ||= @memes.sample
     action = method(meme[:action])
     action.call(*meme[:gen].call)
   end
