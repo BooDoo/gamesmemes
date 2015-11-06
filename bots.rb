@@ -116,7 +116,8 @@ class MyBot < Ebooks::Bot
         "what if #{get_character_name} #{solo_activities.sample} #{interjections.sample}"
       }},
       {label: 'title_rt_or_fav', action: :tweet, gen: proc {
-        "#{title_hashtags.sample}\nRT if #{get_game_title}\nFav if #{get_game_title}"
+        "#{title_hashtags.sample}\nRT if #{get_game_title}\nLike if 
+#{get_game_title}"
       }},
       {label: 'character_otp', action: :tweet, gen: proc {
         "#{get_character_name} x #{get_character_name}: my otp"
