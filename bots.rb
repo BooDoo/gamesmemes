@@ -174,6 +174,23 @@ class MyBot < Ebooks::Bot
 
         ["#{interjections.sample}", {:media_ids=>media_ids.join(',')}]
       }},
+      {label: 'upgrade', action: :tweet, gen: proc{
+        img_urls = []
+        2.times {img_urls.push get_character_image}
+
+        media_ids = img_urls.map do |img_url|
+          Tempfile.open("multi_img") do |f|
+            f.write(RestClient.get(img_url))
+            twitter.upload(File.new(f.path))
+          end
+        end
+
+        media_ids.insert(1,
+              twitter.upload(File.new('./upgrade.jpg'))
+        )
+
+        ["", {:media_ids=>media_ids.join(',')}]
+      }},
       {label: 'trump', action: :pictweet, gen: proc{
         img_url = get_character_image
         img_type = File.extname(img_url)[1..-1]
