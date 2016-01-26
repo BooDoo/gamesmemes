@@ -210,7 +210,9 @@ class MyBot < Ebooks::Bot
           end
         end
 
-        ["#FourGameCrushes #{interjections.sample}", {:media_ids=>media_ids.join(',')}]
+        preface = ["#FourGameCrushes", "same voice actor"].sample
+
+        ["#{preface} #{interjections.sample}", {:media_ids=>media_ids.join(',')}]
       }},
       {label: 'secret_moves', action: :tweet, gen: method(:make_move)}
     ]
