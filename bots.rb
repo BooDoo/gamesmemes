@@ -92,6 +92,9 @@ class MyBot < Ebooks::Bot
       {label: 'bogost_games', action: :tweet, gen: proc {
         "#{get_game_title} would be a lot better without characters #{softeners.sample}"
       }},
+      {label: 'favegames', action: :tweet, gen: proc {
+        "#7favegames\n#{get_game_titles(7).join("\n")}".chars.take(140).join("")
+      }},
       {label: 'title_hashgags', action: :tweet, gen: proc {
         "#{title_hashtags.sample} #{get_game_title}"
       }},
