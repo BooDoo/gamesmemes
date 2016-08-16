@@ -165,6 +165,14 @@ class MyBot < Ebooks::Bot
           ["SWISH!", f.path, {:type=>img_type}]
         end
       }},
+      {label: 'ideal', action: :pictweet, gen: proc {
+        img_url = get_character_image
+        img_type = File.extname(img_url)[1..-1]
+        Tempfile.open("tmp_pic") do |f|
+          f.write(RestClient.get(img_url))
+          ["This is the ideal make body. You may not like it, but this is what peak performance looks like.", f.path, {:type=>img_type}]
+        end
+      }},
       {label: 'hes_cute', action: :tweet, gen: proc{
         media_ids = [twitter.upload(File.new('./hescute.jpg'))]
         img_url = get_character_image
