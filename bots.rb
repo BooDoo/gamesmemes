@@ -3,6 +3,8 @@ require 'tempfile'
 require 'dotenv'
 require 'rest-client'
 require 'twitter_ebooks'
+require 'net_http_ssl_fix'
+
 require_relative 'queneau'
 
 SETTINGS = Dotenv.load.merge(ENV)
