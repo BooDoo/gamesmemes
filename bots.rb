@@ -79,6 +79,7 @@ class MyBot < Ebooks::Bot
     @engines = GAME_ENGINES
     @moves = MOVES
     @moves_qb = Queneau.new(@moves)
+    @pkmn_moves = read_json_file("pokemon_moves")
     @title_hashtags = read_json_file("title_hashtags")
     @interjections = read_json_file("interjections")
     @softeners = read_json_file("softeners")
@@ -117,6 +118,9 @@ class MyBot < Ebooks::Bot
       }},
       {label: 'title_rt_or_fav', action: :tweet, gen: proc {
         "#{title_hashtags.sample}\nRT if #{get_game_title}\nLike if #{get_game_title}"
+      }},
+      {label: 'pokemon_sex_life', action: :tweet, gen: proc {
+        "#DescribeYourSexLifeWithAPokemonMove #{@pkmn_moves.sample}"
       }},
       {label: 'character_otp', action: :tweet, gen: proc {
         "#{get_character_name} x #{get_character_name}: my otp"
