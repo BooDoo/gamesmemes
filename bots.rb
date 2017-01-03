@@ -202,6 +202,17 @@ class MyBot < Ebooks::Bot
 
         ["", {:media_ids=>media_ids.join(',')}]
       }},
+      {label: 'perfection', action: :tweet, gen: proc{
+        media_ids = [twitter.upload(File.new('./perfection.jpg'))]
+        img_url = get_character_image
+        img_type = File.extname(img_url)[1..-1]
+        Tempfile.open("tmp_pic") do |f|
+          f.write(RestClient.get(img_url))
+          media_ids.unshift twitter.upload(File.new(f.path))
+        end
+
+        ["WHAT YOU SEE VS WHAT I SEE", {:media_ids=>media_ids.join(',')}]
+      }},
 #      {label: 'trump', action: :pictweet, gen: proc{
 #       img_url = get_character_image
 #       img_type = File.extname(img_url)[1..-1]
