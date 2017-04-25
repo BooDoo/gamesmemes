@@ -88,7 +88,7 @@ class MyBot < Ebooks::Bot
     @solo_activities = read_json_file("solo_activities")
     @memes = [
       {label: 'bogost_games', action: :tweet, gen: proc {
-        "#{get_game_title} would be a lot better without characters #{softeners.sample}"
+        "#{get_game_title} would be a lot better without #{["characters","story"].sample} #{softeners.sample}"
       }},
       {label: 'favegames', action: :tweet, gen: proc {
         "#7favegames\n#{get_game_titles(7).join("\n")}".chars.take(140).join("")
