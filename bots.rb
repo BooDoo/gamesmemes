@@ -44,7 +44,7 @@ class MyBot < Ebooks::Bot
     self.consumer_key = SETTINGS['CONSUMER_KEY'] # Your app consumer key
     self.consumer_secret = SETTINGS['CONSUMER_SECRET'] # Your app consumer secret
     self.gb_api_key = SETTINGS['GIANTBOMB_API_KEY']
-    self.gb_api = RestClient::Resource.new("http://www.giantbomb.com/api")
+    self.gb_api = RestClient::Resource.new("https://www.giantbomb.com/api")
     self.gb_params = {:api_key => gb_api_key, :format => :json, :field_list => 'name'}
 
     # High count of some GB API resource ids:
@@ -87,6 +87,15 @@ class MyBot < Ebooks::Bot
     @trivia = read_json_file("trivia")
     @solo_activities = read_json_file("solo_activities")
     @memes = [
+      {label: 'looklikethis', action: :pictweet, gen: proc {
+        img_url = get_character_image
+        img_type = File.extname(img_url)[1..-1]
+        you = ["you", "u"].sample
+        Tempfile.open("tmp_pic") do |f|
+          f.write(RestClient.get(img_url))
+          ["if #{you} look like this dm me", f.path, {:type=>img_type}]
+        end
+      }},
       {label: 'bogost_games', action: :tweet, gen: proc {
         "#{get_game_title} would be a lot better without #{["characters","story"].sample} #{softeners.sample}"
       }},
