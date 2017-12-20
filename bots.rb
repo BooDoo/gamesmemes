@@ -150,7 +150,7 @@ class MyBot < Ebooks::Bot
         # We need to be more restrictive with our search complexity....
         bae_terms = ["way", "lay", "slay", "pay", "play", "sway" "bay", "say", "day", "may"]
         bae_query = bae_terms.sample(4).join(",")
-        title = random_from_search_result('search/', {:query=>query, :resources=>"game"}).first[:name]
+        title = random_from_search_result('search/', {:query=>bae_query, :resources=>"game"}).first[:name]
         gag_title = title.downcase.gsub(/[pwlbdsm]+aye?(\S*)/, 'bae\1')
         if title.downcase != gag_title
           "#{title}?\nMore like #{gag_title}, amirite?"
@@ -211,6 +211,11 @@ class MyBot < Ebooks::Bot
 
         ["", {:media_ids=>media_ids.join(',')}]
       }},
+      {label: 'emotional_game', action: :tweet, gen: proc{
+        media_ids = [twitter.upload(File.new('./fuckingmeup.jpg'))]
+        subject = ["he", "she", "they", "my friend", "my gf", "my bf", "my partner", "my wife", "my brother", "my cousin", "my sister", "my mom", "my dad", "my pop-pop", "my niece", "my nephew", "my gran", "my mum", "my pa", "my therapist"].sample
+        ["looks like #{subject} is finally playing #{get_game_title} like I suggested.", {:media_ids=>media_ids.join(',')}]
+      }},      
       {label: 'perfection', action: :tweet, gen: proc{
         media_ids = [twitter.upload(File.new('./perfection.jpg'))]
         img_url = get_character_image
