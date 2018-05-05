@@ -175,7 +175,7 @@ class MyBot < Ebooks::Bot
           ["SWISH!", f.path, {:type=>img_type}]
         end
       }},
-      {label: 'funky', action: pictweet, gen: proc {
+      {label: 'funky', action: :pictweet, gen: proc {
         img_url = get_box_art
         img_type = File.extname(img_url)[1..-1]
         Tempfile.open("tmp_pic") do |f|
@@ -383,7 +383,7 @@ class MyBot < Ebooks::Bot
   def get_character_images(limit=10)
     params = gb_params.merge({:limit=>limit, :field_list=>'name,image', :offset=>rand(characters_max - limit)})
     # TODO: This fails very ungracefully when an image isn't available!
-    JSON.parse(gb_api['characters/'].get(:params => params, &map_images)
+    gb_api['characters/'].get(:params => params, &map_images)
   end
 
   def get_character_image
