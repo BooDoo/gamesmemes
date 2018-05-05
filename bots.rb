@@ -283,7 +283,7 @@ class MyBot < Ebooks::Bot
       elsif res.is_a? String
         res = JSON.parse(res, :symbolize_names=>true)
       end
-      res[:results].map {|el| el[:image][:original_url]}.keep_if {|img| img.include?("gblogo.")}
+      res[:results].map {|el| el[:image][:original_url]}.keep_if {|img| img.include?("gblogo.") == false}
     end
   end
 
