@@ -33,7 +33,7 @@ class MyBot < Ebooks::Bot
   attr_accessor 'accessories_max', 'characters_max', 'companies_max', 'concepts_max', 'franchises_max', 'games_max', 'game_ratings_max', 'genres_max', 'locations_max', 'objects_max', 'people_max', 'platforms_max', 'promos_max', 'rating_boards_max', 'regions_max', 'releases_max', 'reviews_max', 'themes_max', 'user_reviews_max', 'videos_max', 'video_types_max'
   attr_accessor 'moves_qb'
 
-  attr_reader 'map_names'
+  attr_reader 'map_names', 'map_images'
   attr_reader 'title_hashtags', 'interjections', 'solo_activities', 'sins', 'softeners', 'trivia', 'engines'
   attr_reader 'memes'
 
@@ -57,7 +57,7 @@ class MyBot < Ebooks::Bot
     self.companies_max = 10835
     self.concepts_max = 7880
     self.franchises_max = 3233
-    self.games_max = 46612
+    self.games_max = 63000
     self.game_ratings_max = 32
     self.genres_max = 50
     self.locations_max = 4777
@@ -175,6 +175,16 @@ class MyBot < Ebooks::Bot
           ["SWISH!", f.path, {:type=>img_type}]
         end
       }},
+      {label: 'funky', action: pictweet, gen: proc {
+        img_url = get_box_art
+        img_type = File.extname(img_url)[1..-1]
+        Tempfile.open("tmp_pic") do |f|
+          f.write(RestClient.get(img_url))
+          box_w = %x(identify -format %w #{f.path}).to_i
+          %x<convert box.png ( funky-mode.png -resize #{box_w/2} ) -gravity NorthEast -composite compout.png>
+          ["", 'compout.png', {:type=>img_type}]
+        end
+      }},
       {label: 'ideal', action: :pictweet, gen: proc {
         img_url = get_character_image
         img_type = File.extname(img_url)[1..-1]
@@ -214,7 +224,7 @@ class MyBot < Ebooks::Bot
       {label: 'emotional_game', action: :tweet, gen: proc{
         media_ids = [twitter.upload(File.new('./fuckingmeup.jpg'))]
         subject = ["he", "she", "they", "my friend", "my gf", "my bf", "my partner", "my wife", "my brother", "my cousin", "my sister", "my mom", "my dad", "my pop-pop", "my niece", "my nephew", "my gran", "my mum", "my pa", "my therapist"].sample
-        ["looks like #{subject} is finally playing #{get_game_title} like I suggested.", {:media_ids=>media_ids.join(',')}]
+        ["looks like #{subject} finally got to playing #{get_game_title} like I suggested.", {:media_ids=>media_ids.join(',')}]
       }},      
       {label: 'perfection', action: :tweet, gen: proc{
         media_ids = [twitter.upload(File.new('./perfection.jpg'))]
@@ -265,6 +275,15 @@ class MyBot < Ebooks::Bot
         res = JSON.parse(res, :symbolize_names=>true)
       end
       res[:results].map {|el| el[:name]}
+    end
+
+    @map_images = Proc.new do |res|
+      if res.nil?
+        return nil
+      elsif res.is_a? String
+        res = JSON.parse(res, :symbolize_names=>true)
+      end
+      res[:results].map {|el| el[:image][:original_url]}.keep_if {|img| img.include?("gblogo.")}
     end
   end
 
@@ -337,8 +356,18 @@ class MyBot < Ebooks::Bot
     gb_api['games/'].get(:params => params, &map_names)
   end
 
+  def get_box_arts(limit=25)
+    params = {:limit => limit, :field_list=>'name,image,original_release_year', :offset => rand(games_max - limit)}
+    params = gb_params.merge(params)
+    gb_api['games/'].get(:params => params, &map_images)
+  end
+
+  def get_box_art
+    get_box_arts.first
+  end
+
   def get_game_title
-    get_game_titles(1).first
+    get_game_titles.first
   end
 
   def get_character_names(limit=2)
@@ -348,17 +377,17 @@ class MyBot < Ebooks::Bot
   end
 
   def get_character_name
-    get_character_names(1).first
+    get_character_names.first
   end
 
-  def get_character_images(limit=2)
+  def get_character_images(limit=10)
     params = gb_params.merge({:limit=>limit, :field_list=>'name,image', :offset=>rand(characters_max - limit)})
     # TODO: This fails very ungracefully when an image isn't available!
-    JSON.parse(gb_api['characters/'].get(:params => params), :symbolize_names=>true)[:results].map {|c| c[:image][:super_url]}
+    JSON.parse(gb_api['characters/'].get(:params => params, &map_images)
   end
 
   def get_character_image
-    get_character_images(1).first
+    get_character_images.first
   end
 
   def split_keep(input, pattern=/([\.\?\!])/)
