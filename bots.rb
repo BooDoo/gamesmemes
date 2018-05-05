@@ -181,7 +181,7 @@ class MyBot < Ebooks::Bot
         Tempfile.open("tmp_pic") do |f|
           f.write(RestClient.get(img_url))
           box_w = %x(identify -format %w #{f.path}).to_i
-          %x<convert box.png ( funky-mode.png -resize #{box_w/2} ) -gravity NorthEast -composite compout.png>
+          %x<convert #{f.path} \\( funky-mode.png -resize #{box_w/2} \\) -gravity NorthEast -composite compout.png>
           ["", 'compout.png', {:type=>img_type}]
         end
       }},
